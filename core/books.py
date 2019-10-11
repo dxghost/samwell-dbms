@@ -196,21 +196,20 @@ class Shelf:
         print("------------------------------------------------------")
 
     def get_by_exact_name(self, book_name):
+        books = []
         if book_name in self.books_name_data:
             result = self.books_name_data[book_name]
-            books = []
-            if len(result) == 0:
-                return "[get_by_exact_name] No book found named %s.(edited to another name or removed.)" % (book_name)
             for i in result:
                 books.append(self.books[i])
-            return books
-        else:
-            return "[get_by_exact_name] No book found named %s." % (book_name)
+        return books
 
     def get_by_name(self, book_name):
-        # TODO Implement partial
-        pass
-
+        books = []
+        for bk_nm in self.books_name_data.keys():
+            if book_name in bk_nm:
+                for book_id in self.books_name_data[bk_nm]:
+                    books.append(self.books[book_id])
+        return books        
     def get_by_subject(self, subject):
         # TODO Implement partial
         pass
@@ -232,9 +231,9 @@ class Shelf:
 
 if __name__ == "__main__":
     s = Shelf(BOOKS_DATABASE_PATH)
-    # b = Book(83521113921233320802,
-    #          "Army of the Mongols",
-    #          "Ghenghis",
+    # b = Book(74521113921233320802,
+    #          "Army of the Egyptian",
+    #          "Saladin",
     #          "dasda Academy",
     #          "adsasd",
     #          2022,
@@ -242,6 +241,6 @@ if __name__ == "__main__":
     # s.add_book(b)
     # s.edit_book(id=2, isbn=80021113921231300002,author="Cyrus",name="Army of Iranian")
     # s.remove_book(2)
-    print(s.get_by_exact_name("Army of the Chinese"))
+    [print(i) for i in s.get_by_name("Army of the")]
     print()
-    print(s)
+    # print(s)
