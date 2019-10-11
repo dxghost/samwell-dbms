@@ -25,5 +25,14 @@
         "Subject": "Bio",
         "PublishYear": 2021,
         "PagesCount": 21
+    },
+    {
+        "ISBN": 99521113921231300000,
+        "Name": "DEJAVU's Story",
+        "Author": "Mahdi DuXi",
+        "Publisher": "Ghostu Academy",
+        "Subject": "Bio",
+        "PublishYear": 2022,
+        "PagesCount": 9101
     }
 ]

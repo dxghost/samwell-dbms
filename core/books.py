@@ -1,72 +1,32 @@
-# TODO implement edit&delete methods
 # TODO implement different queries
 import json
 from settings import BOOKS_DATABASE_PATH
+from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
+
 
 class Book:
     def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count):
         # TODO support multi value for authors and subjects
         # ISBN
-        if type(ISBN) != int:
-            raise TypeError(
-                "Invalid data for ISBN. can't assign type `%s` to int." % (type(ISBN)))
-        if len(str(ISBN)) != 20:
-            raise ValueError(
-                "ISBN digits should be 20, given %s." % (len(str(ISBN))))
+        validate_isbn(ISBN)
         self.isbn = ISBN
-
         # NAME
-        if type(name) != str:
-            raise TypeError(
-                "Invalid data for book name. can't assign type `%s` to str." % (type(name)))
-        if len(subject) > 200:
-            raise ValueError(
-                "book name should be at most 200 characters, given %s." % (len(str(name))))
+        validate_name(name)
         self.name = name
-
         # AUTHOR
-        if type(author) != str:
-            raise TypeError(
-                "Invalid data for author. can't assign type `%s` to str." % (type(author)))
-        if len(author) > 200:
-            raise ValueError(
-                "author should be at most 200 characters, given %s." % (len(str(author))))
+        validate_author(author)
         self.author = author
-
         # PUBLISHER
-        if type(publisher) != str:
-            raise TypeError(
-                "Invalid data for publisher. can't assign type `%s` to str." % (type(publisher)))
-        if len(publisher) > 200:
-            raise ValueError(
-                "publisher should be at most 200 characters, given %s." % (len(str(publisher))))
+        validate_publisher(publisher)
         self.publisher = publisher
-
         # SUBJECT
-        if type(subject) != str:
-            raise TypeError(
-                "Invalid data for subject. can't assign type `%s` to str." % (type(subject)))
-        if len(subject) > 100:
-            raise ValueError(
-                "subject should be at most 100 characters, given %s." % (len(str(subject))))
+        validate_subject(subject)
         self.subject = subject
-
         # PUBLISHED YEAR
-        if type(published_year) != int:
-            raise TypeError("Invalid data for published_year. can't assign type `%s` to int." % (
-                type(published_year)))
-        if len(str(published_year)) != 4:
-            raise ValueError("published_year digits should be 4, given %s." % (
-                len(str(published_year))))
+        validate_publish_year(published_year)
         self.published_year = published_year
-
         # PAGES COUNT
-        if type(pages_count) != int:
-            raise TypeError("Invalid data for pages_count. can't assign type `%s` to int." % (
-                type(pages_count)))
-        if len(str(pages_count)) > 4:
-            raise ValueError(
-                "pages_count digits should be at most 4, given %s." % (len(str(pages_count))))
+        validate_pages_count(pages_count)
         self.pages_count = pages_count
 
     def as_dictionary(self):
@@ -83,6 +43,7 @@ class Book:
     def __str__(self):
         print("")
         print("Book Name:              %s" % (self.name))
+        print("Book ISBN:              %s" % (self.isbn))
         print("Book Author:            %s" % (self.author))
         print("Book Publisher:         %s" % (self.publisher))
         print("Book Subject:           %s" % (self.subject))
@@ -114,11 +75,47 @@ class Shelf:
         print(self.books[id-1])
         del self.books[id-1]
         del self.books_data[id-1]
-        print("Removing from disk")
         self.sync_database()
         # TODO sync indexers
 
+    def edit_book(self, id=None, isbn=None, name=None, author=None,
+                  publisher=None, subject=None, published_year=None,
+                  pages_count=None):
+        if id:
+            book = self.books[id-1]
+        else:
+            raise ValueError(
+                "Didn't specify if of the book which needs to be edited.")
+        print("Book you ordered to Edit:(befor edition)")
+        print(book)
+        if isbn:
+            validate_isbn(isbn)
+            book.isbn = isbn
+        if name:
+            validate_name(name)
+            book.name = name
+        if author:
+            validate_author(author)
+            book.author = author
+        if publisher:
+            validate_publisher(publisher)
+            book.publisher = publisher
+        if subject:
+            validate_subject(subject)
+            book.subject = subject
+        if published_year:
+            validate_publish_year(published_year)
+            book.published_year = published_year
+        if pages_count:
+            validate_pages_count(pages_count)
+            book.pages_count = pages_count
+        print("The current status of book:(after edition)")
+        print(book)
+        self.books_data[id-1] = self.books[id-1].as_dictionary()
+        self.sync_database()
+
     def sync_database(self):
+        print("Saving Changes to disk.")
         with open(BOOKS_DATABASE_PATH, 'w') as books_database:
             json.dump(self.books_data, books_database)
         print("Changes saved to disk successfully.")
@@ -144,14 +141,15 @@ class Shelf:
 
 if __name__ == "__main__":
     s = Shelf(BOOKS_DATABASE_PATH)
-    b = Book(96521119921231300000,
-             "DUXU's Story",
+    b = Book(96521113921231300000,
+             "DEJAVU's Story",
              "Mahdi DuXi",
              "Ghostu Academy",
              "Bio",
-             2021,
-             21)
-    s.add_book(b)
+             2022,
+             9101)
+    # s.add_book(b)
+    s.edit_book(id=4, isbn=99521113921231300000)
     # s.remove_book(2)
     print()
     print(s)
