@@ -1,6 +1,6 @@
 from settings import BOOK_ISBN_INDEX
 import json
-
+# TODO Generalize functions
 
 def validate_isbn(ISBN):
     if type(ISBN) != int:
@@ -12,7 +12,8 @@ def validate_isbn(ISBN):
     with open(BOOK_ISBN_INDEX, 'r') as book_isbn_table:
         current_isbns = json.load(book_isbn_table)
     if str(ISBN) in current_isbns:
-        raise ValueError("There already exists a book with given ISBN %d." % (ISBN))
+        raise ValueError(
+            "There already exists a book with given ISBN %d." % (ISBN))
     return True
 
 
@@ -72,4 +73,50 @@ def validate_pages_count(pages_count):
     if len(str(pages_count)) > 4:
         raise ValueError(
             "pages_count digits should be at most 4, given %s." % (len(str(pages_count))))
+    return True
+
+
+def validate_publisher_number(pub_no):
+    if type(pub_no) != int:
+        raise TypeError("Invalid data for publisher number. can't assign type `%s` to int." % (
+            type(pub_no)))
+    if len(str(pub_no)) != 6:
+        raise ValueError(
+            "Publisher number digits should be 6, given %s." % (len(str(pub_no))))
+    return True
+
+def validate_publisher_name(pub_name):
+    if type(pub_name) != str:
+        raise TypeError(
+            "Invalid data for publisher name. can't assign type `%s` to str." % (type(pub_name)))
+    if len(pub_name) > 200:
+        raise ValueError(
+            "Publisher name should be at most 200 characters, given %s." % (len(str(pub_name))))
+    return True
+
+def validate_publisher_field(pub_field):
+    if type(pub_field) != str:
+        raise TypeError(
+            "Invalid data for publisher field. can't assign type `%s` to str." % (type(pub_field)))
+    if len(pub_field) > 200:
+        raise ValueError(
+            "Publisher field should be at most 200 characters, given %s." % (len(str(pub_field))))
+    return True
+
+def validate_publisher_manager_name(pub_manager):
+    if type(pub_manager) != str:
+        raise TypeError(
+            "Invalid data for publisher manager name. can't assign type `%s` to str." % (type(pub_manager)))
+    if len(pub_manager) > 100:
+        raise ValueError(
+            "publisher manager name should be at most 100 characters, given %s." % (len(str(pub_manager))))
+    return True
+
+def validate_publisher_address(pub_addr):
+    if type(pub_addr) != str:
+        raise TypeError(
+            "Invalid data for publisher address. can't assign type `%s` to str." % (type(pub_addr)))
+    if len(pub_addr) > 200:
+        raise ValueError(
+            "Publisher address should be at most 200 characters, given %s." % (len(str(pub_addr))))
     return True
