@@ -1,1 +1,22 @@
-{}
+{
+    "1": {
+        "ID": 1,
+        "ISBN": 66521113921231300000,
+        "Name": "Army of the dead",
+        "Author": "Wu Lee",
+        "Publisher": "dasda Academy",
+        "Subject": "adsasd",
+        "PublishYear": 2022,
+        "PagesCount": 29
+    },
+    "3": {
+        "ID": 3,
+        "ISBN": 80021113921231300000,
+        "Name": "Army of chinese",
+        "Author": "Wu Zi",
+        "Publisher": "dasda Academy",
+        "Subject": "adsasd",
+        "PublishYear": 2022,
+        "PagesCount": 29
+    }
+}
