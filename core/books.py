@@ -209,19 +209,28 @@ class Shelf:
             if book_name in bk_nm:
                 for book_id in self.books_name_data[bk_nm]:
                     books.append(self.books[book_id])
-        return books        
+        return books
+
     def get_by_subject(self, subject):
-        # TODO Implement partial
-        pass
+        books = []
+        for book in self.books.values():
+            if subject in book.subject:
+                books.append(book)
+        return books
 
     def get_by_isbn(self, isbn):
-        # TODO Implement exact
-        pass
+        isbn = str(isbn)
+        if isbn in self.books_isbn_data:
+            return self.books[self.books_isbn_data[isbn]]
+        else:
+            return None
 
-    def get_by_author(self, isbn):
-        # TODO Implement partial
-        pass
-
+    def get_by_author(self, author_name):
+        books=[]
+        if author_name in self.books_author_data:
+            for book_id in self.books_author_data[author_name]:
+                books.append(self.books[book_id])
+        return books
     def __str__(self):
         print("The books available in shelf:")
         for book in self.books:
@@ -241,6 +250,6 @@ if __name__ == "__main__":
     # s.add_book(b)
     # s.edit_book(id=2, isbn=80021113921231300002,author="Cyrus",name="Army of Iranian")
     # s.remove_book(2)
-    [print(i) for i in s.get_by_name("Army of the")]
+    [print(i) for i in s.get_by_author("Darius")]
     print()
     # print(s)
