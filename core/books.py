@@ -6,9 +6,9 @@ from id_gen import get_book_id
 
 
 class Book:
-    def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count, id=None,admin=False):
+    def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count, id=None, admin=False):
         # TODO support multi value for authors and subjects
-        if admin==False:
+        if admin == False:
             validate_isbn(ISBN)
             validate_name(name)
             validate_author(author)
@@ -97,7 +97,6 @@ class Shelf:
         self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
         self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
         print("------------------------------------------------------")
-
 
     def edit_book(self, id=None, isbn=None, name=None, author=None,
                   publisher=None, subject=None, published_year=None,
@@ -197,6 +196,18 @@ class Shelf:
         self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
         print("------------------------------------------------------")
 
+    def get_by_exact_name(self, book_name):
+        if book_name in self.books_name_data:
+            result = self.books_name_data[book_name]
+            books = []
+            if len(result) == 0:
+                return "[get_by_exact_name] No book found named %s.(edited to another name or removed.)" % (book_name)
+            for i in result:
+                books.append(self.books[i])
+            return books
+        else:
+            return "[get_by_exact_name] No book found named %s." % (book_name)
+
     def __str__(self):
         print("The books available in shelf:")
         for book in self.books:
@@ -214,7 +225,8 @@ if __name__ == "__main__":
     #          2022,
     #          29)
     # s.add_book(b)
-    s.edit_book(id=2, isbn=80021113921231300002,author="Cyrus",name="Army of Iranian")
+    # s.edit_book(id=2, isbn=80021113921231300002,author="Cyrus",name="Army of Iranian")
     # s.remove_book(2)
+    print(s.get_by_exact_name("Army of the Chinese"))
     print()
     print(s)
