@@ -1,9 +1,19 @@
 {
     "1": {
         "ID": 1,
-        "ISBN": 66521113921231300000,
-        "Name": "Army of the dead",
-        "Author": "Wu Lee",
+        "ISBN": 43521113921231320801,
+        "Name": "Army of the Chinese",
+        "Author": "Wu Lee Bolton",
+        "Publisher": "dasda Academy",
+        "Subject": "adsasd",
+        "PublishYear": 2022,
+        "PagesCount": 29
+    },
+    "2": {
+        "ID": 2,
+        "ISBN": 80021113921231300002,
+        "Name": "Army of Iranian",
+        "Author": "Cyrus",
         "Publisher": "dasda Academy",
         "Subject": "adsasd",
         "PublishYear": 2022,
@@ -11,9 +21,9 @@
     },
     "3": {
         "ID": 3,
-        "ISBN": 80021113921231300000,
-        "Name": "Army of chinese",
-        "Author": "Wu Zi",
+        "ISBN": 83521113921233320802,
+        "Name": "Army of the Mongols",
+        "Author": "Ghenghis",
         "Publisher": "dasda Academy",
         "Subject": "adsasd",
         "PublishYear": 2022,

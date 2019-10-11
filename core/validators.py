@@ -1,3 +1,7 @@
+from settings import BOOK_ISBN_INDEX
+import json
+
+
 def validate_isbn(ISBN):
     if type(ISBN) != int:
         raise TypeError(
@@ -5,6 +9,10 @@ def validate_isbn(ISBN):
     if len(str(ISBN)) != 20:
         raise ValueError(
             "ISBN digits should be 20, given %s." % (len(str(ISBN))))
+    with open(BOOK_ISBN_INDEX, 'r') as book_isbn_table:
+        current_isbns = json.load(book_isbn_table)
+    if str(ISBN) in current_isbns:
+        raise ValueError("There already exists a book with given ISBN %d." % (ISBN))
     return True
 
 
