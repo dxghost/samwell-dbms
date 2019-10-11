@@ -1,6 +1,5 @@
-# TODO implement publisher class
-# TODO apply constraints to init
-# TODO implement queries/stores
+# TODO implement edit_publishers and remove_publishers
+# TODO implement queries
 from validators import validate_publisher_number, validate_publisher_name, validate_publisher_field, validate_publisher_manager_name, validate_publisher_address, validate_publisher_books
 from settings import PUBLISHERS_DATABASE_PATH
 import json

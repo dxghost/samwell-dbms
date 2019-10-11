@@ -2,7 +2,7 @@ import json
 from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX, BOOK_NAME_INDEX
 from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
 from id_gen import get_book_id
-
+# TODO implement Add to publishers books and edit and remove
 
 class Book:
     def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count, id=None, admin=False):
