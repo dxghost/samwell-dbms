@@ -59,21 +59,21 @@ class Shelf:
         self.books_name_data = {}
         with open(BOOKS_DATABASE_PATH, 'r') as books_database:
             self.books_data = json.load(books_database)
-            for book in self.books_data:
-                book = self.books_data[book]
-                author = book["Author"]
-                isbn = book["ISBN"]
-                name = book["Name"]
-                id = book["ID"]
-                self.books[id] = Book(ISBN=isbn,
-                                      name=name,
-                                      author=author,
-                                      publisher=book["Publisher"],
-                                      subject=book["Subject"],
-                                      published_year=book["PublishYear"],
-                                      pages_count=book["PagesCount"],
-                                      id=book["ID"],
-                                      admin=True)
+        for book in self.books_data:
+            book = self.books_data[book]
+            author = book["Author"]
+            isbn = book["ISBN"]
+            name = book["Name"]
+            id = book["ID"]
+            self.books[id] = Book(ISBN=isbn,
+                                    name=name,
+                                    author=author,
+                                    publisher=book["Publisher"],
+                                    subject=book["Subject"],
+                                    published_year=book["PublishYear"],
+                                    pages_count=book["PagesCount"],
+                                    id=book["ID"],
+                                    admin=True)
 
         with open(BOOK_AUTHOR_INDEX, 'r') as author_index_table:
             self.books_author_data = json.load(author_index_table)
@@ -239,7 +239,7 @@ class Shelf:
 
 
 if __name__ == "__main__":
-    s = Shelf(BOOKS_DATABASE_PATH)
+    s = Shelf()
     # b = Book(74521113921233320802,
     #          "Army of the Egyptian",
     #          "Saladin",
