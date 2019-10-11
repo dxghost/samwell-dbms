@@ -51,7 +51,7 @@ class Book:
 
 
 class Shelf:
-    def __init__(self, datas_path):
+    def __init__(self):
         self.books = {}
         self.books_data = {}
         self.books_author_data = {}

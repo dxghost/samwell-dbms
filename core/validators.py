@@ -2,6 +2,7 @@ from settings import BOOK_ISBN_INDEX
 import json
 # TODO Generalize functions
 
+
 def validate_isbn(ISBN):
     if type(ISBN) != int:
         raise TypeError(
@@ -85,6 +86,7 @@ def validate_publisher_number(pub_no):
             "Publisher number digits should be 6, given %s." % (len(str(pub_no))))
     return True
 
+
 def validate_publisher_name(pub_name):
     if type(pub_name) != str:
         raise TypeError(
@@ -93,6 +95,7 @@ def validate_publisher_name(pub_name):
         raise ValueError(
             "Publisher name should be at most 200 characters, given %s." % (len(str(pub_name))))
     return True
+
 
 def validate_publisher_field(pub_field):
     if type(pub_field) != str:
@@ -103,6 +106,7 @@ def validate_publisher_field(pub_field):
             "Publisher field should be at most 200 characters, given %s." % (len(str(pub_field))))
     return True
 
+
 def validate_publisher_manager_name(pub_manager):
     if type(pub_manager) != str:
         raise TypeError(
@@ -112,6 +116,7 @@ def validate_publisher_manager_name(pub_manager):
             "publisher manager name should be at most 100 characters, given %s." % (len(str(pub_manager))))
     return True
 
+
 def validate_publisher_address(pub_addr):
     if type(pub_addr) != str:
         raise TypeError(
@@ -119,4 +124,18 @@ def validate_publisher_address(pub_addr):
     if len(pub_addr) > 200:
         raise ValueError(
             "Publisher address should be at most 200 characters, given %s." % (len(str(pub_addr))))
+    return True
+
+
+def validate_publisher_books(pub_books):
+    if type(pub_books) != list:
+        raise TypeError(
+            "Invalid data for published books. cant assign type %s to list." % (
+                type(pub_books)))
+    for i in pub_books:
+        if type(i) != int:
+            raise TypeError(
+                "Invalid data for published book id. cant assign type %s to int." % (
+                    type(i))
+            )
     return True
