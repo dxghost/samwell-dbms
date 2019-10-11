@@ -1,13 +1,13 @@
 # TODO implement different queries
 import json
-from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX
+from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX
 from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
 
 
 class Book:
-    def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count,id=None):
+    def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count, id=None):
         # TODO support multi value for authors and subjects
-        self.id=id
+        self.id = id
         # ISBN
         validate_isbn(ISBN)
         self.isbn = ISBN
@@ -59,12 +59,14 @@ class Shelf:
         self.books = []
         self.books_data = []
         self.books_author_data = {}
+        self.books_isbn_data = {}
         with open(BOOKS_DATABASE_PATH, 'r') as books_database:
             self.books_data = json.load(books_database)
             id_counter = 1
             for book in self.books_data:
                 author = book["Author"]
-                self.books.append(Book(ISBN=book["ISBN"],
+                isbn = book["ISBN"]
+                self.books.append(Book(ISBN=isbn,
                                        name=book["Name"],
                                        author=author,
                                        publisher=book["Publisher"],
@@ -76,7 +78,10 @@ class Shelf:
                     self.books_author_data[author].append(id_counter)
                 else:
                     self.books_author_data[author] = [id_counter]
+                self.books_isbn_data[isbn] = id_counter
                 id_counter += 1
+
+        self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
         self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
         # TODO sync indexers
 
@@ -85,10 +90,12 @@ class Shelf:
         book = self.books[id-1]
         print(book)
         self.books_author_data[book.author].remove(book.id)
+        del self.books_isbn_data[book.isbn]
         del self.books[id-1]
         del self.books_data[id-1]
         self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
         self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+        self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
         # TODO sync indexers
 
     def edit_book(self, id=None, isbn=None, name=None, author=None,
@@ -103,13 +110,19 @@ class Shelf:
         print(book)
         if isbn:
             validate_isbn(isbn)
+            self.books_isbn_data[isbn] = self.books_isbn_data[book.isbn]
+            del self.books_isbn_data[book.isbn]
             book.isbn = isbn
+            self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
         if name:
             validate_name(name)
             book.name = name
         if author:
             validate_author(author)
+            self.books_author_data[author] = self.books_author_data[book.author]
+            del self.books_author_data[book.author]
             book.author = author
+            self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
         if publisher:
             validate_publisher(publisher)
             book.publisher = publisher
@@ -164,6 +177,6 @@ if __name__ == "__main__":
              29)
     # s.add_book(b)
     # s.edit_book(id=4, isbn=10021113921231300000)
-    s.remove_book(5)
+    # s.remove_book(5)
     print()
     print(s)
