@@ -1,7 +1,7 @@
 # TODO implement edit&delete methods
 # TODO implement different queries
 import json
-BOOKS_DATABASE_PATH = "../resources/data/books/books.json"
+from settings import BOOKS_DATABASE_PATH
 
 class Book:
     def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count):
@@ -97,6 +97,7 @@ class Shelf:
         self.books_data = []
         with open(BOOKS_DATABASE_PATH, 'r') as books_database:
             self.books_data = json.load(books_database)
+            id_counter = 1
             for book in self.books_data:
                 self.books.append(Book(ISBN=book["ISBN"],
                                        name=book["Name"],
@@ -105,6 +106,14 @@ class Shelf:
                                        subject=book["Subject"],
                                        published_year=book["PublishYear"],
                                        pages_count=book["PagesCount"]))
+                id_counter += 1
+                # TODO Add to BookISBN indexing
+
+    def remove_book(self, id):
+        print("The book you ordered to remove:")
+        print(self.books[id-1])
+        del self.books[id-1]
+        del self.books_data[id-1]
 
     def add_book(self, book):
         if(type(book) != Book):
@@ -134,6 +143,6 @@ if __name__ == "__main__":
              "Bio",
              1999,
              21)
-    s.add_book(b)
+    # s.add_book(b)
     print()
     print(s)
