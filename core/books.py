@@ -1,4 +1,3 @@
-# TODO implement different queries
 import json
 from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX, BOOK_NAME_INDEX
 from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
@@ -207,6 +206,22 @@ class Shelf:
             return books
         else:
             return "[get_by_exact_name] No book found named %s." % (book_name)
+
+    def get_by_name(self, book_name):
+        # TODO Implement partial
+        pass
+
+    def get_by_subject(self, subject):
+        # TODO Implement partial
+        pass
+
+    def get_by_isbn(self, isbn):
+        # TODO Implement exact
+        pass
+
+    def get_by_author(self, isbn):
+        # TODO Implement partial
+        pass
 
     def __str__(self):
         print("The books available in shelf:")
