@@ -107,13 +107,21 @@ class Shelf:
                                        published_year=book["PublishYear"],
                                        pages_count=book["PagesCount"]))
                 id_counter += 1
-                # TODO Add to BookISBN indexing
+                # TODO sync indexers
 
     def remove_book(self, id):
         print("The book you ordered to remove:")
         print(self.books[id-1])
         del self.books[id-1]
         del self.books_data[id-1]
+        print("Removing from disk")
+        self.sync_database()
+        # TODO sync indexers
+
+    def sync_database(self):
+        with open(BOOKS_DATABASE_PATH, 'w') as books_database:
+            json.dump(self.books_data, books_database)
+        print("Changes saved to disk successfully.")
 
     def add_book(self, book):
         if(type(book) != Book):
@@ -123,9 +131,9 @@ class Shelf:
         print("Adding to Shelf.")
         self.books.append(book)
         self.books_data.append(book.as_dictionary())
-        print("Saving added book to file.")
-        with open(BOOKS_DATABASE_PATH, 'w') as books_database:
-            json.dump(self.books_data, books_database)
+        print("Saving added book to disk.")
+        self.sync_database()
+        # TODO sync indexers
 
     def __str__(self):
         print("The books available in shelf:")
@@ -137,12 +145,13 @@ class Shelf:
 if __name__ == "__main__":
     s = Shelf(BOOKS_DATABASE_PATH)
     b = Book(96521119921231300000,
-             "Mahdi's Story",
-             "Mahdi DXi",
-             "Ghost Academy",
+             "DUXU's Story",
+             "Mahdi DuXi",
+             "Ghostu Academy",
              "Bio",
-             1999,
+             2021,
              21)
-    # s.add_book(b)
+    s.add_book(b)
+    # s.remove_book(2)
     print()
     print(s)

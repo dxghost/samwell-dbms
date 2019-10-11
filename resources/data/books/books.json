@@ -9,21 +9,21 @@
         "PagesCount": 300
     },
     {
-        "ISBN": 96521132191231309990,
-        "Author": "Mahdi Nazari",
-        "Name": "Nazari's Story",
-        "Publisher": "Nazari Academy",
-        "Subject": "Dictionary",
-        "PublishYear": 2010,
-        "PagesCount": 10
-    },
-    {
         "ISBN": 96521119921231300000,
         "Name": "Mahdi's Story",
         "Author": "Mahdi DXi",
         "Publisher": "Ghost Academy",
         "Subject": "Bio",
         "PublishYear": 1999,
+        "PagesCount": 21
+    },
+    {
+        "ISBN": 96521119921231300000,
+        "Name": "DUXU's Story",
+        "Author": "Mahdi DuXi",
+        "Publisher": "Ghostu Academy",
+        "Subject": "Bio",
+        "PublishYear": 2021,
         "PagesCount": 21
     }
 ]
