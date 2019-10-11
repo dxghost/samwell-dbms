@@ -1,12 +1,13 @@
 # TODO implement different queries
 import json
-from settings import BOOKS_DATABASE_PATH
+from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX
 from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
 
 
 class Book:
-    def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count):
+    def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count,id=None):
         # TODO support multi value for authors and subjects
+        self.id=id
         # ISBN
         validate_isbn(ISBN)
         self.isbn = ISBN
@@ -42,6 +43,7 @@ class Book:
 
     def __str__(self):
         print("")
+        print("Book ID:                %s" % (self.id))
         print("Book Name:              %s" % (self.name))
         print("Book ISBN:              %s" % (self.isbn))
         print("Book Author:            %s" % (self.author))
@@ -56,26 +58,37 @@ class Shelf:
     def __init__(self, datas_path):
         self.books = []
         self.books_data = []
+        self.books_author_data = {}
         with open(BOOKS_DATABASE_PATH, 'r') as books_database:
             self.books_data = json.load(books_database)
             id_counter = 1
             for book in self.books_data:
+                author = book["Author"]
                 self.books.append(Book(ISBN=book["ISBN"],
                                        name=book["Name"],
-                                       author=book["Author"],
+                                       author=author,
                                        publisher=book["Publisher"],
                                        subject=book["Subject"],
                                        published_year=book["PublishYear"],
-                                       pages_count=book["PagesCount"]))
+                                       pages_count=book["PagesCount"],
+                                       id=id_counter))
+                if book["Author"] in self.books_author_data:
+                    self.books_author_data[author].append(id_counter)
+                else:
+                    self.books_author_data[author] = [id_counter]
                 id_counter += 1
-                # TODO sync indexers
+        self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+        # TODO sync indexers
 
     def remove_book(self, id):
         print("The book you ordered to remove:")
-        print(self.books[id-1])
+        book = self.books[id-1]
+        print(book)
+        self.books_author_data[book.author].remove(book.id)
         del self.books[id-1]
         del self.books_data[id-1]
-        self.sync_database()
+        self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
         # TODO sync indexers
 
     def edit_book(self, id=None, isbn=None, name=None, author=None,
@@ -112,12 +125,13 @@ class Shelf:
         print("The current status of book:(after edition)")
         print(book)
         self.books_data[id-1] = self.books[id-1].as_dictionary()
-        self.sync_database()
+        self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        # TODO sync indexers
 
-    def sync_database(self):
-        print("Saving Changes to disk.")
-        with open(BOOKS_DATABASE_PATH, 'w') as books_database:
-            json.dump(self.books_data, books_database)
+    def sync_database(self, file_path, data):
+        print("Saving Changes to %s." % (file_path))
+        with open(file_path, 'w') as database:
+            json.dump(data, database)
         print("Changes saved to disk successfully.")
 
     def add_book(self, book):
@@ -129,7 +143,7 @@ class Shelf:
         self.books.append(book)
         self.books_data.append(book.as_dictionary())
         print("Saving added book to disk.")
-        self.sync_database()
+        self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
         # TODO sync indexers
 
     def __str__(self):
@@ -142,14 +156,14 @@ class Shelf:
 if __name__ == "__main__":
     s = Shelf(BOOKS_DATABASE_PATH)
     b = Book(96521113921231300000,
-             "DEJAVU's Story",
+             "asdad's asd",
              "Mahdi DuXi",
-             "Ghostu Academy",
-             "Bio",
+             "dasda Academy",
+             "adsasd",
              2022,
-             9101)
+             29)
     # s.add_book(b)
-    s.edit_book(id=4, isbn=99521113921231300000)
-    # s.remove_book(2)
+    # s.edit_book(id=4, isbn=10021113921231300000)
+    s.remove_book(5)
     print()
     print(s)
