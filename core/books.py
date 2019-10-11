@@ -1,8 +1,9 @@
 # TODO implement different queries
+# TODO implement unique=True for ISBN
 import json
 from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX
 from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
-
+from id_gen import get_book_id
 
 class Book:
     def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count, id=None):
@@ -32,6 +33,7 @@ class Book:
 
     def as_dictionary(self):
         return({
+            "ID": self.id,
             "ISBN": self.isbn,
             "Name": self.name,
             "Author": self.author,
@@ -56,30 +58,32 @@ class Book:
 
 class Shelf:
     def __init__(self, datas_path):
-        self.books = []
-        self.books_data = []
+        self.books = {}
+        self.books_data = {}
         self.books_author_data = {}
         self.books_isbn_data = {}
         with open(BOOKS_DATABASE_PATH, 'r') as books_database:
             self.books_data = json.load(books_database)
-            id_counter = 1
             for book in self.books_data:
+                book = self.books_data[book]
                 author = book["Author"]
                 isbn = book["ISBN"]
-                self.books.append(Book(ISBN=isbn,
+                id = book["ID"]
+                self.books[id] = Book(ISBN=isbn,
                                        name=book["Name"],
                                        author=author,
                                        publisher=book["Publisher"],
                                        subject=book["Subject"],
                                        published_year=book["PublishYear"],
                                        pages_count=book["PagesCount"],
-                                       id=id_counter))
+                                       id=book["ID"])
+
                 if book["Author"] in self.books_author_data:
-                    self.books_author_data[author].append(id_counter)
+                    self.books_author_data[author].append(id)
                 else:
-                    self.books_author_data[author] = [id_counter]
-                self.books_isbn_data[isbn] = id_counter
-                id_counter += 1
+                    self.books_author_data[author] = [id]
+                self.books_isbn_data[isbn] = id
+
 
         self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
         self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
@@ -87,12 +91,12 @@ class Shelf:
 
     def remove_book(self, id):
         print("The book you ordered to remove:")
-        book = self.books[id-1]
+        book = self.books[id]
         print(book)
         self.books_author_data[book.author].remove(book.id)
         del self.books_isbn_data[book.isbn]
-        del self.books[id-1]
-        del self.books_data[id-1]
+        del self.books[id]
+        del self.books_data[str(id)]
         self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
         self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
         self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
@@ -102,7 +106,7 @@ class Shelf:
                   publisher=None, subject=None, published_year=None,
                   pages_count=None):
         if id:
-            book = self.books[id-1]
+            book = self.books[id]
         else:
             raise ValueError(
                 "Didn't specify if of the book which needs to be edited.")
@@ -119,8 +123,11 @@ class Shelf:
             book.name = name
         if author:
             validate_author(author)
-            self.books_author_data[author] = self.books_author_data[book.author]
-            del self.books_author_data[book.author]
+            if author in self.books_author_data:
+                self.books_author_data[author].append(book.id)
+            else:
+                self.books_author_data[author]=[book.id]
+            self.books_author_data[book.author].remove(book.id)                
             book.author = author
             self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
         if publisher:
@@ -137,7 +144,8 @@ class Shelf:
             book.pages_count = pages_count
         print("The current status of book:(after edition)")
         print(book)
-        self.books_data[id-1] = self.books[id-1].as_dictionary()
+        print((self.books_data.keys()))
+        self.books_data[str(id)] = self.books[id].as_dictionary()
         self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
         # TODO sync indexers
 
@@ -151,32 +159,42 @@ class Shelf:
         if(type(book) != Book):
             raise TypeError(
                 "Only book instances are allowed, given %s." % (type(book)))
-        print(book)
+        
         print("Adding to Shelf.")
-        self.books.append(book)
-        self.books_data.append(book.as_dictionary())
+        id = get_book_id()
+        book.id=id
+        print(book)
+        self.books[id]=book
+        self.books_data[id]=book.as_dictionary()
+        if book.author in self.books_author_data:
+            self.books_author_data[book.author].append(book.id)
+        else:
+            self.books_author_data[book.author]=[book.id]
+        self.books_isbn_data[book.isbn]=book.id
         print("Saving added book to disk.")
         self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+        self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
         # TODO sync indexers
 
     def __str__(self):
         print("The books available in shelf:")
         for book in self.books:
-            print(book)
+            print(self.books[book])
         return ""
 
 
 if __name__ == "__main__":
     s = Shelf(BOOKS_DATABASE_PATH)
-    b = Book(96521113921231300000,
-             "asdad's asd",
-             "Mahdi DuXi",
+    b = Book(66521113921231300000,
+             "Army of the dead",
+             "Wu Lee",
              "dasda Academy",
              "adsasd",
              2022,
              29)
     # s.add_book(b)
-    # s.edit_book(id=4, isbn=10021113921231300000)
-    # s.remove_book(5)
+    # s.edit_book(id=15, isbn=80021113921231300000,author="Wu Zi")
+    # s.remove_book(10)
     print()
     print(s)
