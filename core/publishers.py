@@ -82,6 +82,24 @@ class PublishingMinistry:
         print("[sync_database] Changes saved to disk successfully.")
         print("-------------------------------------")
 
+    def remove_publisher(self, name):
+        print("[remove_publisher] The publisher you ordered to remove:")
+        publisher = self.publishers[name]
+        print(publisher)
+        # for i in publisher.books:
+        # TODO remove books or empty publisher field
+            # self.books_author_data[book.author].remove(book.id)
+        
+        # self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        # self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+        # self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
+        # self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
+
+        del self.publishers[name]
+        del self.publishers_data[name]
+        self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
+        print("------------------------------------------------------")
+
 if __name__ == "__main__":
     m = PublishingMinistry()
     p = Publisher(

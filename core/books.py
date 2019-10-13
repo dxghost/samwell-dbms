@@ -47,6 +47,10 @@ class Book:
         print("Book Subject:           %s" % (self.subject))
         print("Book Published Year:    %s" % (self.published_year))
         print("Book Pages Count:       %s" % (self.pages_count))
+        # TODO Get publisher data and show
+        print("Publisher Name: ")
+        print("Publisher Field: ")
+        print("Publisher Address")
         return ""
 
 
@@ -91,6 +95,7 @@ class Shelf:
         del self.books_isbn_data[str(book.isbn)]
         del self.books[id]
         del self.books_data[str(id)]
+        # TODO remove book from its publishers books.
         self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
         self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
         self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
@@ -137,6 +142,9 @@ class Shelf:
             self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
 
         if publisher:
+            # TODO Implement
+            # Remove book from previoust publisher 
+            # Add book to new publisher's books
             validate_publisher(publisher)
             book.publisher = publisher
 
@@ -187,6 +195,13 @@ class Shelf:
             self.books_name_data[book.name].append(book.id)
         else:
             self.books_name_data[book.name] = [book.id]
+        
+        # TODO Implement
+        # if book.publisher in PUBLISHERS:
+        #     PUBLISHERS[book.publisher]["books"].append(book.id)
+        # else:
+        #     PUBLISHERS[book.publisher]= #TODO append a new publisher object with book.publisher name and books with book.id value in it
+    
 
         self.books_isbn_data[book.isbn] = book.id
         self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
