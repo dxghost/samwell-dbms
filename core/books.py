@@ -2,7 +2,6 @@ import json
 from core.settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX, BOOK_NAME_INDEX
 from core.validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
 from core.id_gen import get_book_id
-# TODO implement Add to publishers books and edit and remove
 
 
 class Book:
@@ -276,6 +275,28 @@ class Shelf:
             for book_id in self.books_author_data[author_name]:
                 books.append(self.books[book_id])
         return books
+
+    def show_by_id(self, id):
+        if id not in self.books:
+            print("[show_by_id] No book found with given id %s." % (id))
+            return
+        book = self.books[id]
+        publisher = self.ministry.publishers[book.publisher]
+        print("")
+        print("Book ID:                %s" % (book.id))
+        print("Book Name:              %s" % (book.name))
+        print("Book ISBN:              %s" % (book.isbn))
+        print("Book Author:            %s" % (book.author))
+        print("Book Subject:           %s" % (book.subject))
+        print("Book Published Year:    %s" % (book.published_year))
+        print("Book Pages Count:       %s" % (book.pages_count))
+        print("Book Publisher:         %s" % (book.publisher))
+        print("Publisher Name:         %s" % (publisher.name))
+        print("Publisher Number:       %s" % (publisher.number))
+        print("Publisher Field:        %s" % (publisher.field))
+        print("Publisher Manager:      %s" % (publisher.manager_name))
+        print("Publisher Address:      %s" % (publisher.address))
+        print("Publisher Books:        %s" % (publisher.published_books))
 
     def __str__(self):
         print("The books available in shelf:")

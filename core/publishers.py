@@ -1,4 +1,3 @@
-# TODO implement edit_publishers and remove_publishers
 # TODO implement queries
 from core.validators import validate_publisher_number, validate_publisher_name, validate_publisher_field, validate_publisher_manager_name, validate_publisher_address, validate_publisher_books
 from core.settings import PUBLISHERS_DATABASE_PATH
@@ -58,12 +57,13 @@ class PublishingMinistry:
                 pub_books=publisher_data["Books"],
                 admin=True
             )
-    def update(self,table):
-        if table=="PUBLISHERS":
+
+    def update(self, table):
+        if table == "PUBLISHERS":
             self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
         else:
             print("[Publisher update] Enter Correct table name.")
-            print("[Publisher update] Choices are: PUBLISHER.")            
+            print("[Publisher update] Choices are: PUBLISHER.")
 
     def set_book_shelf(self, shelf):
         self.shelf = shelf
@@ -82,9 +82,27 @@ class PublishingMinistry:
         self.publishers[name] = publisher
         self.publishers_data[name] = publisher.as_dictionary()
 
-        # self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
         self.update("PUBLISHERS")
         print("------------------------------------------------------")
+
+    def edit_publisher(self, name, pub_no=None, pub_field=None, pub_manager=None, pub_addr=None):
+        if name not in self.publishers:
+            raise ValueError("No publisher found named %s." % (name))
+        publisher = self.publishers[name]
+        if pub_no:
+            validate_publisher_number(pub_no)
+            publisher.number = pub_no
+        if pub_field:
+            validate_publisher_field(pub_field)
+            publisher.field = pub_field
+        if pub_manager:
+            validate_publisher_manager_name(pub_manager)
+            publisher.manager_name = pub_manager
+        if pub_addr:
+            validate_publisher_address(pub_addr)
+            publisher.address = pub_addr
+        self.publishers_data[publisher.name] = publisher.as_dictionary()
+        self.update("PUBLISHERS")
 
     def sync_database(self, file_path, data):
         print("[sync_database] Saving Changes to %s." % (file_path))

@@ -1,4 +1,3 @@
-# TODO fix relative path problems
 BOOKS_DATABASE_PATH = "./resources/data/books/books.json"
 BOOKS_ID_TABLE = "./resources/data/counters/books_id.json"
 PUBLISHERS_DATABASE_PATH = "./resources/data/publishers/publishers.json"

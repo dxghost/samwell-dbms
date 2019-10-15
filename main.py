@@ -33,4 +33,6 @@ book_shelf.set_publishers_ministry(publishing_agent)
 # publishing_agent.add_publisher(p)
 
 # book_shelf.edit_book(id=3, publisher="GHLMCH")
-book_shelf.remove_book(4)
+# book_shelf.remove_book(4)
+# book_shelf.show_by_id(5)
+# publishing_agent.edit_publisher("GAJ",pub_no=999999,pub_field="JANGI",pub_addr="Nezam Abad",pub_manager="Reza Pishro")
