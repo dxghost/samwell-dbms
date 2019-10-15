@@ -47,7 +47,6 @@ class Book:
         print("Book Subject:           %s" % (self.subject))
         print("Book Published Year:    %s" % (self.published_year))
         print("Book Pages Count:       %s" % (self.pages_count))
-        # TODO Get publisher data and show
         print("Publisher Name: ")
         print("Publisher Field: ")
         print("Publisher Address")
