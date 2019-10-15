@@ -1,0 +1,22 @@
+{
+    "GAJ": {
+        "Number": 212312,
+        "Name": "GAJ",
+        "Field": "Academics",
+        "Manager": "Ghasem Gaji",
+        "Address": "Enghelab",
+        "Books": [
+            5
+        ]
+    },
+    "GHLMCH": {
+        "Number": 812312,
+        "Name": "GHLMCH",
+        "Field": "Academics",
+        "Manager": "kzm ghlmch",
+        "Address": "Enghelab",
+        "Books": [
+            3
+        ]
+    }
+}

@@ -1,4 +1,4 @@
-from settings import BOOK_ISBN_INDEX
+from core.settings import BOOK_ISBN_INDEX
 import json
 # TODO Generalize functions
 

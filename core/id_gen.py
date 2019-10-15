@@ -1,5 +1,5 @@
 # TODO implement a function which gives current ID and increments it
-from settings import BOOKS_ID_TABLE,PUBLISHERS_ID_TABLE
+from core.settings import BOOKS_ID_TABLE
 import json
 
 

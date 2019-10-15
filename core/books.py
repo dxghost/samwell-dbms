@@ -1,8 +1,9 @@
 import json
-from settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX, BOOK_NAME_INDEX
-from validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
-from id_gen import get_book_id
+from core.settings import BOOKS_DATABASE_PATH, BOOK_AUTHOR_INDEX, BOOK_ISBN_INDEX, BOOK_NAME_INDEX
+from core.validators import validate_isbn, validate_name, validate_author, validate_publisher, validate_subject, validate_publish_year, validate_pages_count
+from core.id_gen import get_book_id
 # TODO implement Add to publishers books and edit and remove
+
 
 class Book:
     def __init__(self, ISBN, name, author, publisher, subject, published_year, pages_count, id=None, admin=False):
@@ -70,14 +71,14 @@ class Shelf:
             name = book["Name"]
             id = book["ID"]
             self.books[id] = Book(ISBN=isbn,
-                                    name=name,
-                                    author=author,
-                                    publisher=book["Publisher"],
-                                    subject=book["Subject"],
-                                    published_year=book["PublishYear"],
-                                    pages_count=book["PagesCount"],
-                                    id=book["ID"],
-                                    admin=True)
+                                  name=name,
+                                  author=author,
+                                  publisher=book["Publisher"],
+                                  subject=book["Subject"],
+                                  published_year=book["PublishYear"],
+                                  pages_count=book["PagesCount"],
+                                  id=book["ID"],
+                                  admin=True)
 
         with open(BOOK_AUTHOR_INDEX, 'r') as author_index_table:
             self.books_author_data = json.load(author_index_table)
@@ -86,20 +87,38 @@ class Shelf:
         with open(BOOK_NAME_INDEX, 'r') as name_index_table:
             self.books_name_data = json.load(name_index_table)
 
+    def set_publishers_ministry(self, ministry):
+        self.ministry = ministry
+        print("[set_publishers_ministry] Ministry set.")
+
+    def update(self, table):
+        if table == "BOOK_AUTHOR":
+            self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+        elif table == "BOOK_ISBN":
+            self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
+        elif table == "BOOK_NAME":
+            self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
+        elif table == "BOOKS":
+            self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        else:
+            print("[Book update] Enter Correct table name.")
+            print(
+                "[Book update] Choices are: BOOK_AUTHOR, BOOK_ISBN, BOOK_NAME, BOOKS.")
+
     def remove_book(self, id):
         print("[remove_book] The book you ordered to remove:")
         book = self.books[id]
         print(book)
         self.books_author_data[book.author].remove(book.id)
         self.books_name_data[book.name].remove(book.id)
+        self.ministry.publishers_data[book.publisher]["Books"].remove(book.id)
         del self.books_isbn_data[str(book.isbn)]
         del self.books[id]
         del self.books_data[str(id)]
-        # TODO remove book from its publishers books.
-        self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
-        self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
-        self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
-        self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
+        self.update("BOOKS")
+        self.update("BOOK_AUTHOR")
+        self.update("BOOK_NAME")
+        self.ministry.update("PUBLISHERS")
         print("------------------------------------------------------")
 
     def edit_book(self, id=None, isbn=None, name=None, author=None,
@@ -119,7 +138,7 @@ class Shelf:
                 isbn)] = self.books_isbn_data[str(book.isbn)]
             del self.books_isbn_data[str(book.isbn)]
             book.isbn = isbn
-            self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
+            self.update("BOOK_ISBN")
 
         if name:
             validate_name(name)
@@ -129,7 +148,7 @@ class Shelf:
                 self.books_name_data[name] = [book.id]
             self.books_name_data[book.name].remove(book.id)
             book.name = name
-            self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
+            self.update("BOOK_NAME")
 
         if author:
             validate_author(author)
@@ -139,13 +158,17 @@ class Shelf:
                 self.books_author_data[author] = [book.id]
             self.books_author_data[book.author].remove(book.id)
             book.author = author
-            self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+            self.update("BOOK_AUTHOR")
 
         if publisher:
-            # TODO Implement
-            # Remove book from previoust publisher 
-            # Add book to new publisher's books
+            if publisher not in self.ministry.publishers_data:
+                print(
+                    "[edit_book] Ignored. Theres no publisher with given name. %s" % (publisher))
             validate_publisher(publisher)
+            self.ministry.publishers_data[book.publisher]["Books"].remove(
+                book.id)
+            self.ministry.publishers_data[publisher]["Books"].append(book.id)
+            self.ministry.update("PUBLISHERS")
             book.publisher = publisher
 
         if subject:
@@ -164,7 +187,8 @@ class Shelf:
         print(book)
         print((self.books_data.keys()))
         self.books_data[str(id)] = self.books[id].as_dictionary()
-        self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        # self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        self.update("BOOKS")
         print("-------------------------------------")
 
     def sync_database(self, file_path, data):
@@ -178,6 +202,9 @@ class Shelf:
         if(type(book) != Book):
             raise TypeError(
                 "Only book instances are allowed, given %s." % (type(book)))
+        if book.publisher not in self.ministry.publishers_data:
+            raise ValueError(
+                "Theres no publisher with given name. %s" % (book.publisher))
 
         print("[add_book] Adding to Shelf.")
         id = get_book_id()
@@ -195,19 +222,22 @@ class Shelf:
             self.books_name_data[book.name].append(book.id)
         else:
             self.books_name_data[book.name] = [book.id]
-        
-        # TODO Implement
-        # if book.publisher in PUBLISHERS:
-        #     PUBLISHERS[book.publisher]["books"].append(book.id)
-        # else:
-        #     PUBLISHERS[book.publisher]= #TODO append a new publisher object with book.publisher name and books with book.id value in it
-    
+
+        self.ministry.publishers_data[book.publisher]["Books"].append(
+            book.id)
+        self.ministry.update("PUBLISHERS")
+        print("self.ministry.publishers[book.publisher].published_books: %s" % (
+            self.ministry.publishers[book.publisher].published_books))
 
         self.books_isbn_data[book.isbn] = book.id
-        self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
-        self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
-        self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
-        self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
+        # self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
+        self.update("BOOKS")
+        # self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
+        self.update("BOOK_AUTHOR")
+        # self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
+        self.update("BOOK_ISBN")
+        # self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
+        self.update("BOOK_NAME")
         print("------------------------------------------------------")
 
     def get_by_exact_name(self, book_name):
@@ -241,11 +271,12 @@ class Shelf:
             return None
 
     def get_by_author(self, author_name):
-        books=[]
+        books = []
         if author_name in self.books_author_data:
             for book_id in self.books_author_data[author_name]:
                 books.append(self.books[book_id])
         return books
+
     def __str__(self):
         print("The books available in shelf:")
         for book in self.books:

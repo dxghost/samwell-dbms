@@ -1,7 +1,7 @@
 # TODO implement edit_publishers and remove_publishers
 # TODO implement queries
-from validators import validate_publisher_number, validate_publisher_name, validate_publisher_field, validate_publisher_manager_name, validate_publisher_address, validate_publisher_books
-from settings import PUBLISHERS_DATABASE_PATH
+from core.validators import validate_publisher_number, validate_publisher_name, validate_publisher_field, validate_publisher_manager_name, validate_publisher_address, validate_publisher_books
+from core.settings import PUBLISHERS_DATABASE_PATH
 import json
 
 
@@ -58,6 +58,16 @@ class PublishingMinistry:
                 pub_books=publisher_data["Books"],
                 admin=True
             )
+    def update(self,table):
+        if table=="PUBLISHERS":
+            self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
+        else:
+            print("[Publisher update] Enter Correct table name.")
+            print("[Publisher update] Choices are: PUBLISHER.")            
+
+    def set_book_shelf(self, shelf):
+        self.shelf = shelf
+        print("[set_book_shelf] Book shelf set.")
 
     def add_publisher(self, publisher):
         if(type(publisher) != Publisher):
@@ -72,7 +82,8 @@ class PublishingMinistry:
         self.publishers[name] = publisher
         self.publishers_data[name] = publisher.as_dictionary()
 
-        self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
+        # self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
+        self.update("PUBLISHERS")
         print("------------------------------------------------------")
 
     def sync_database(self, file_path, data):
@@ -86,19 +97,12 @@ class PublishingMinistry:
         print("[remove_publisher] The publisher you ordered to remove:")
         publisher = self.publishers[name]
         print(publisher)
-        # for i in publisher.books:
-        # TODO remove books or empty publisher field
-            # self.books_author_data[book.author].remove(book.id)
-        
-        # self.sync_database(BOOKS_DATABASE_PATH, self.books_data)
-        # self.sync_database(BOOK_AUTHOR_INDEX, self.books_author_data)
-        # self.sync_database(BOOK_ISBN_INDEX, self.books_isbn_data)
-        # self.sync_database(BOOK_NAME_INDEX, self.books_name_data)
 
         del self.publishers[name]
         del self.publishers_data[name]
-        self.sync_database(PUBLISHERS_DATABASE_PATH, self.publishers_data)
+        self.update("PUBLISHERS")
         print("------------------------------------------------------")
+
 
 if __name__ == "__main__":
     m = PublishingMinistry()
