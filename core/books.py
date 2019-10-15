@@ -117,6 +117,7 @@ class Shelf:
         self.update("BOOKS")
         self.update("BOOK_AUTHOR")
         self.update("BOOK_NAME")
+        self.update("BOOK_ISBN")
         self.ministry.update("PUBLISHERS")
         print("------------------------------------------------------")
 

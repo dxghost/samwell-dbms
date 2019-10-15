@@ -16,7 +16,7 @@ book_shelf.set_publishers_ministry(publishing_agent)
 #     82521113921233320802,
 #     "Army of the Love",
 #     "Night Lover",
-#     "GAJ",
+#     "GHLMCH",
 #     "Fight",
 #     2031,
 #     10
@@ -36,3 +36,4 @@ book_shelf.set_publishers_ministry(publishing_agent)
 # book_shelf.remove_book(4)
 # book_shelf.show_by_id(5)
 # publishing_agent.edit_publisher("GAJ",pub_no=999999,pub_field="JANGI",pub_addr="Nezam Abad",pub_manager="Reza Pishro")
+publishing_agent.remove_publisher("GHLMCH")

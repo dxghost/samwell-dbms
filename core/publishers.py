@@ -112,9 +112,13 @@ class PublishingMinistry:
         print("-------------------------------------")
 
     def remove_publisher(self, name):
+        if name not in self.publishers:
+            raise ValueError("No publisher found named %s." % (name))
         print("[remove_publisher] The publisher you ordered to remove:")
         publisher = self.publishers[name]
         print(publisher)
+        for book_id in publisher.published_books:
+            self.shelf.remove_book(int(book_id))
 
         del self.publishers[name]
         del self.publishers_data[name]
@@ -126,7 +130,7 @@ if __name__ == "__main__":
     m = PublishingMinistry()
     p = Publisher(
         212312,
-        "GAJ",
+        "GHLMCH",
         "Academics",
         "Ghasem Gaji",
         "Enghelab",
