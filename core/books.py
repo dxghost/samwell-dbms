@@ -87,7 +87,7 @@ class Shelf:
 
     def set_publishers_ministry(self, ministry):
         self.ministry = ministry
-        print("[set_publishers_ministry] Ministry set.")
+        # print("[set_publishers_ministry] Ministry set.")
 
     def update(self, table):
         if table == "BOOK_AUTHOR":

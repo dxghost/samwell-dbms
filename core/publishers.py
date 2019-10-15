@@ -1,4 +1,3 @@
-# TODO implement queries
 from core.validators import validate_publisher_number, validate_publisher_name, validate_publisher_field, validate_publisher_manager_name, validate_publisher_address, validate_publisher_books
 from core.settings import PUBLISHERS_DATABASE_PATH
 import json
@@ -67,7 +66,7 @@ class PublishingMinistry:
 
     def set_book_shelf(self, shelf):
         self.shelf = shelf
-        print("[set_book_shelf] Book shelf set.")
+        # print("[set_book_shelf] Book shelf set.")
 
     def add_publisher(self, publisher):
         if(type(publisher) != Publisher):
@@ -125,6 +124,18 @@ class PublishingMinistry:
         self.update("PUBLISHERS")
         print("------------------------------------------------------")
 
+    def get_by_name(self,name):
+        publishers =[]
+        for publisher in self.publishers:
+            if name in publisher.name:
+                publishers.append(publisher)
+
+        return publishers
+
+    def show_publisher(self, name):
+        if name not in self.publishers:
+            raise ValueError("No publisher found named %s." % (name))
+        print(self.publishers[name])
 
 if __name__ == "__main__":
     m = PublishingMinistry()
